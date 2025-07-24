@@ -28,7 +28,4 @@ pageextension 2088004 "DS Salesperson Card Ext Demo" extends "Salesperson/Purcha
             }
         }
     }
-
-    var
-        myInt: Integer;
 }

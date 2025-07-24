@@ -14,48 +14,36 @@ codeunit 2088002 "DS Handle Opportunity Demo"
         DimeDSSetup: Record "Dime DS Setup";
         Opportunity: Record Opportunity;
         ToDo: Record "To-do";
-        LineNo: Integer;
+        LineNo: Text;
     begin
         if not Opportunity.Get(DimeDSAppointment."Job No.") then
             exit; // No Opportunity found, nothing to do
 
         Evaluate(LineNo, DimeDSAppointment."Task No.");
 
-
         DimeDSSetup.Get();
 
+        // New appointment: create new task + create link entry between Dime.Scheduler appointment and BC task
         if DimeDSAppointment."Database Action" = 'I' then begin
             DimeDSAppointmentResource.Reset();
             DimeDSAppointmentResource.SetRange("Entry No.", DimeDSAppointment."Entry No.");
             if DimeDSAppointmentResource.FindSet() then
                 repeat
                     if (DimeDSAppointment."Sent From Backoffice") then
-                        // Handle Appointment
                         InsertDSTodoLink(DimeDSAppointment, DimeDSAppointmentResource)
                     else
-                        AllocateResource(DimeDSAppointment, DimeDSAppointmentResource, Opportunity);
+                        CreateToDo(DimeDSAppointment, DimeDSAppointmentResource, Opportunity);
                 until DimeDSAppointmentResource.Next() = 0;
         end;
 
-        if DimeDSAppointment."Database Action" = 'D' then begin
-            DimeDSOrderLineLink.Reset();
-            DimeDSOrderLineLink.SetRange("Appointment Id", DimeDSAppointment."Appointment Id");
-            if DimeDSOrderLineLink.FindSet() then
-                repeat
-                    if Todo.Get(DimeDSOrderLineLink."Document No.") then
-                        Todo.Delete(true);
-                    DimeDSOrderLineLink.Delete(true);
-                until DimeDSOrderLineLink.Next() = 0;
-        end;
-
+        // Updated appointment: update task (lookup in link table)
         if DimeDSAppointment."Database Action" = 'U' then begin
-            // First check if Resources planned in Dime.Scheduler are allocated in NAV 
+            // First check if Resources planned in Dime.Scheduler are allocated in BC 
             DimeDSAppointmentResource.Reset();
             DimeDSAppointmentResource.SetRange("Entry No.", DimeDSAppointment."Entry No.");
             if DimeDSAppointmentResource.FindSet() then
                 repeat
                     if (DimeDSAppointment."Sent From Backoffice") then
-                        // Handle Appointment
                         UpdateDSTodoLink(DimeDSAppointment, DimeDSAppointmentResource)
                     else begin
                         DimeDSOrderLineLink.SetRange("Appointment Id", DimeDSAppointment."Appointment Id");
@@ -63,12 +51,12 @@ codeunit 2088002 "DS Handle Opportunity Demo"
                         if DimeDSOrderLineLink.FindFirst() then begin
                             UpdateTodo(DimeDSAppointment, DimeDSAppointmentResource, DimeDSOrderLineLink);
                         end else begin
-                            AllocateResource(DimeDSAppointment, DimeDSAppointmentResource, Opportunity);
+                            CreateToDo(DimeDSAppointment, DimeDSAppointmentResource, Opportunity);
                         end;
                     end;
                 until DimeDSAppointmentResource.Next() = 0;
 
-            // Then check if Resources already allocated in NAV have been deleted in Dime.Scheduler
+            // Then check if resources already allocated in BC have been deleted in Dime.Scheduler
             DimeDSOrderLineLink.Reset();
             DimeDSOrderLineLink.SetRange("Appointment Id", DimeDSAppointment."Appointment Id");
             if DimeDSOrderLineLink.FindSet() then
@@ -83,9 +71,21 @@ codeunit 2088002 "DS Handle Opportunity Demo"
                     end;
                 until DimeDSOrderLineLink.Next() = 0;
         end;
+
+        // Delete task and link entry between Dime.Scheduler appointment and BC task
+        if DimeDSAppointment."Database Action" = 'D' then begin
+            DimeDSOrderLineLink.Reset();
+            DimeDSOrderLineLink.SetRange("Appointment Id", DimeDSAppointment."Appointment Id");
+            if DimeDSOrderLineLink.FindSet() then
+                repeat
+                    if Todo.Get(DimeDSOrderLineLink."Document No.") then
+                        Todo.Delete(true);
+                    DimeDSOrderLineLink.Delete(true);
+                until DimeDSOrderLineLink.Next() = 0;
+        end;
     end;
 
-    local procedure AllocateResource(DimeDSAppointment: Record "Dime DS Appointment"; DimeDSAppointmentResource: Record "Dime DS Appointment Resource"; Opportunity: Record Opportunity)
+    local procedure CreateToDo(DimeDSAppointment: Record "Dime DS Appointment"; DimeDSAppointmentResource: Record "Dime DS Appointment Resource"; Opportunity: Record Opportunity)
     var
         Salesperson: Record "Salesperson/Purchaser";
         Todo: Record "To-do";
@@ -97,7 +97,6 @@ codeunit 2088002 "DS Handle Opportunity Demo"
             Salesperson.Get(DimeDSAppointmentResource."Resource No.");
 
         Todo.Init();
-        Todo.Validate(Type, Todo.Type::"Phone Call");
         Todo."Opportunity No." := Opportunity."No.";
         Todo.Description := DimeDSAppointment.Subject;
         Todo.Validate("Contact No.", Opportunity."Contact No.");

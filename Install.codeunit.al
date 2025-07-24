@@ -26,7 +26,7 @@ codeunit 2088007 "DS Install Demo"
             DSSourceType.Init();
             DSSourceType."Table No." := DATABASE::Opportunity;
             DSSourceType."Source Type" := 'OPP';
-            DSSourceType."Processing Codeunit No." := 2087732;
+            DSSourceType."Processing Codeunit No." := 2088002;
             DSSourceType.Insert();
         end;
 
