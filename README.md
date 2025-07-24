@@ -12,7 +12,6 @@ This demo application provides working examples of how to:
 - Send salespersons as resources in Dime.Scheduler
 - Process planned opportunities in BC as opportunity tasks
 
-
 ## Installation
 
 1. Git clone this repositority
@@ -50,3 +49,7 @@ root/
 - **Platform**: 16.0.0.0
 - **Application**: 16.0.0.0
 - **Runtime**: 14.0
+
+## Screenshots
+
+<img src="/assets//screenshot.png" height="800px" />
