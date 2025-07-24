@@ -2,7 +2,10 @@
 <img src="https://cdn.dimescheduler.com/dime-scheduler/v2/logo.svg" height="100px" />
 </div>
 
-# BC Connector Examples
+
+<div align="center">
+<h1>BC Connector Examples</h1>
+</div>
 
 This demo application provides working examples of how to:
 - Send opportunities from Business Central to Dime.Scheduler
