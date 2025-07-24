@@ -1,0 +1,10 @@
+*.zip
+/src/*.app
+/test/*.app
+*.g.xlf
+**/.alpackages/
+**/.vscode/.altemplates
+**/.vscode/.alcache
+**/rad.json
+**/.vs
+**/.vscode
