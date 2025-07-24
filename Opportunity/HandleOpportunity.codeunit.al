@@ -23,7 +23,6 @@ codeunit 2088002 "DS Handle Opportunity Demo"
 
 
         DimeDSSetup.Get();
-        ToDo.SetPreventDsUpdate(true);
 
         if DimeDSAppointment."Database Action" = 'I' then begin
             DimeDSAppointmentResource.Reset();
@@ -128,7 +127,6 @@ codeunit 2088002 "DS Handle Opportunity Demo"
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
     begin
         if Todo.Get(DimeDSOrderLineLink."Document No.") then begin
-            Todo.SetPreventDsUpdate(true);
             Todo.Date := DimeDSDimeSchedulerMgt.DateTime2Date(DimeDSAppointment.Start);
             Todo."Ending Date" := DimeDSDimeSchedulerMgt.DateTime2Date(DimeDSAppointment."End");
             Todo."Salesperson Code" := DimeDSAppointmentResource."Resource No.";

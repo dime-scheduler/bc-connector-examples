@@ -1,5 +1,22 @@
 pageextension 2088001 "DS OpportunityCardExt Demo" extends "Opportunity Card"
 {
+    layout
+    {
+        addlast(Content)
+        {
+            group("DS Dime.Scheduler Tab")
+            {
+                Caption = 'Dime.Scheduler';
+
+                field("DS Send Opportunity Header Tab"; Rec."DS Send Opportunity Header")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies whether to send the opportunity header to Dime.Scheduler.';
+                }
+            }
+        }
+    }
+
     actions
     {
         addlast(processing)

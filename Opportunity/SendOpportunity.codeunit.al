@@ -7,9 +7,20 @@ codeunit 2088000 "DS Send Opportunity Demo"
         Contact: Record Contact;
         OpportunityStages: Record "Opportunity Entry";
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
+        DimeDSConnectorSetup: Record "Dime DS Connector Setup";
+        DimeDSSetup: Record "Dime DS Setup";
+        DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
-        DimeDSConnectorSetup.Get();
-        DimeDSSetup.Get();
+        // Ensure setup records exist
+        if not DimeDSConnectorSetup.Get() then begin
+            DimeDSConnectorSetup.Init();
+            DimeDSConnectorSetup.Insert();
+        end;
+
+        if not DimeDSSetup.Get() then begin
+            DimeDSSetup.Init();
+            DimeDSSetup.Insert();
+        end;
 
         if not Contact.get(Rec."Contact No.") then
             exit;
@@ -116,27 +127,19 @@ codeunit 2088000 "DS Send Opportunity Demo"
         // Call the Dime.Scheduler web service will insert or update the Job
         DSWebservMgt.CallDimeSchedulerWS('mboc_upsertJob');
 
-        Clear(OpportunityStages);
-        OpportunityStages.SetRange("Opportunity No.", Rec."No.");
-        OpportunityStages.SetFilter("Sales Cycle Stage Description", '<>%1', '');
-        if OpportunityStages.FindSet() then
-            repeat
-                SendOpportunityCycleStages(OpportunityStages);
-            until OpportunityStages.Next() = 0;
+        // Check if opportunity header should be sent as task
+        if Rec."DS Send Opportunity Header" then
+            this.SendOpportunityAsTask(Rec)
+        else begin
+            Clear(OpportunityStages);
+            OpportunityStages.SetRange("Opportunity No.", Rec."No.");
+            OpportunityStages.SetFilter("Sales Cycle Stage Description", '<>%1', '');
+            if OpportunityStages.FindSet() then
+                repeat
+                    this.SendOpportunityCycleStages(OpportunityStages);
+                until OpportunityStages.Next() = 0;
+        end;
 
-    end;
-
-    var
-        DimeDSConnectorSetup: Record "Dime DS Connector Setup";
-        DimeDSSetup: Record "Dime DS Setup";
-        DSWebservMgt: Codeunit "Dime DS Web Service Management";
-
-    procedure SynchOpportunities(var Opportunity: Record Opportunity)
-    begin
-        if Opportunity.FindSet() then
-            repeat
-                CODEUNIT.Run(CODEUNIT::"Dime DS Send Assembly Order", Opportunity);
-            until Opportunity.Next() = 0;
     end;
 
     local procedure SendOpportunityCycleStages(var OpportunityStages: Record "Opportunity Entry")
@@ -144,6 +147,9 @@ codeunit 2088000 "DS Send Opportunity Demo"
         Opportunity: Record Opportunity;
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
         RecRef: RecordRef;
+        DimeDSConnectorSetup: Record "Dime DS Connector Setup";
+        DimeDSSetup: Record "Dime DS Setup";
+        DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
         DimeDSConnectorSetup.Get();
         DimeDSSetup.Get();
@@ -264,6 +270,9 @@ codeunit 2088000 "DS Send Opportunity Demo"
     var
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
         RecRef: RecordRef;
+        DimeDSConnectorSetup: Record "Dime DS Connector Setup";
+        DimeDSSetup: Record "Dime DS Setup";
+        DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
         DimeDSConnectorSetup.Get();
         DimeDSSetup.Get();
@@ -382,6 +391,9 @@ codeunit 2088000 "DS Send Opportunity Demo"
     procedure DeleteOpportunity(Opportunity: Record Opportunity)
     var
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
+        DimeDSConnectorSetup: Record "Dime DS Connector Setup";
+        DimeDSSetup: Record "Dime DS Setup";
+        DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
         DimeDSConnectorSetup.Get();
         DimeDSSetup.Get();
