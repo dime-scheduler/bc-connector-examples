@@ -18,6 +18,8 @@ codeunit 2088000 "DS Send Opportunity Demo"
         if not DimeDSSetup.Get() then
             exit;
 
+        EnsureDSSourceTypes();
+
         if not Contact.get(Rec."Contact No.") then
             exit;
 
@@ -156,6 +158,28 @@ codeunit 2088000 "DS Send Opportunity Demo"
             DSWebservMgt.AddParameter('CheckAppointments', DSWebservMgt.HandleBool(DimeDSSetup."Check Appointment on Delete"));
 
             DSWebservMgt.CallDimeSchedulerWS('mboc_deleteJob');
+        end;
+    end;
+
+    procedure EnsureDSSourceTypes()
+    var
+        DSSourceType: Record "Dime DS Source Type";
+    begin
+        // Initialize SalesPerson source type
+        if not DSSourceType.Get(DATABASE::"Salesperson/Purchaser") then begin
+            DSSourceType.Init();
+            DSSourceType."Table No." := DATABASE::"Salesperson/Purchaser";
+            DSSourceType."Source Type" := 'REP';
+            DSSourceType.Insert();
+        end;
+
+        // Initialize Opportunity source type
+        if not DSSourceType.Get(DATABASE::Opportunity) then begin
+            DSSourceType.Init();
+            DSSourceType."Table No." := DATABASE::Opportunity;
+            DSSourceType."Source Type" := 'OPP';
+            DSSourceType."Processing Codeunit No." := Codeunit::"DS Handle Opportunity Demo";
+            DSSourceType.Insert();
         end;
     end;
 }

@@ -8,6 +8,7 @@ codeunit 2088003 "DS Send Sales Person Demo"
         DimeDSConnectorSetup: Record "Dime DS Connector Setup";
         DimeDSDocFilterValueMgt: Codeunit "Dime DS Doc. Filter Value Mgt.";
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
+        DSSendOpportunityDemo: Codeunit "DS Send Opportunity Demo";
         RecRef: RecordRef;
     begin
         // Ensure setup records exist
@@ -17,6 +18,7 @@ codeunit 2088003 "DS Send Sales Person Demo"
         if not DimeDSSetup.Get() then
             exit;
 
+        DSSendOpportunityDemo.EnsureDSSourceTypes();
         // Transfer the Filter Values for the Resource - uses the DS Doc. Filter Value Sources setup
         RecRef.GetTable(Rec);
         RecRef.SetRecFilter();
