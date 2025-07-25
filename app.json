@@ -4,7 +4,7 @@
   "publisher": "Dime Software",
   "brief": "This app showcases how to extend the base extension and use the opportunity table (and salespeople) to send data to Dime.Scheduler.",
   "description": "Dime.Scheduler is a graphical resource planning and scheduling tool for Microsoft Dynamics NAV, Microsoft Dynamics 365 Business Central, Microsoft Dynamics CRM and other business application partners that wish to integrate planning capabilities with their business processes and vertical or industry solutions.",
-  "version": "0.0.1.0",
+  "version": "1.0.0.0",
   "contextSensitiveHelpUrl": "https://docs.dimescheduler.com",
   "privacyStatement": "https://www.dimescheduler.com/privacy/",
   "EULA": "https://www.dimescheduler.com/terms",

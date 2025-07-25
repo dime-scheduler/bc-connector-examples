@@ -18,8 +18,10 @@ codeunit 2088003 "DS Send Sales Person Demo"
         if not DimeDSSetup.Get() then
             exit;
 
+        // For dev purposes only - see XML comments of this procedure
         DSSendOpportunityDemo.EnsureDSSourceTypes();
-        // Transfer the Filter Values for the Resource - uses the DS Doc. Filter Value Sources setup
+
+        // Transfer the filter values for the resource - uses the DS Doc. Filter Value Sources setup
         RecRef.GetTable(Rec);
         RecRef.SetRecFilter();
         DimeDSDocFilterValueMgt.TransferDocFilterValues(RecRef);

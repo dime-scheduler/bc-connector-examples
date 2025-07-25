@@ -52,30 +52,33 @@ code bc-connector-examples
 ## Prerequisites
 
 The Dime.Scheduler base app must be deployed and configured.
+👉 For more information, check out the [docs](https://docs.dimescheduler.com/backoffice/bc/intro).
 
 ## How to use this example
 
 ### Setting up source types
 
-Before anything else, check whether the `Install.codeunit.al` codeunit has run. You can verify this by going to the `Dime.Scheduler Source Types` list, where you should see entries for the `Opportunity` table and the `SalesPeople/Purchasers` table:
+The `Install.codeunit.al` initializes the salespersons and opportunities tables in the Dime.Scheduler Source Types table. This initialization only needs to be run once. 
 
-<img src="/assets/sourcetypes.png" height="200px" />
+For developers who want to debug this app, we added the `EnsureDSSourceTypes` code unit that does the same thing. Note that this is an antipattern and is exclusively done for the developer's convenience.
+
+<img src="./assets/sourcetypes.png" height="200px" />
 
 The source type table tells Dime.Scheduler which table should be used when planning data is sent back to Business Central (specifically, the `Dime.Scheduler Appointments` table). Two entities are involved here: the salesperson and the planned opportunity.
 
 When planning data arrives in Dime.Scheduler, the codeunit codeunit `2088002 "DS Handle Opportunity Demo"` is executed, as it is the designated handler specified in the `Source Types` column. The appointments may include various assigned resources, although the Salesperson entity is likely the primary one in this context.
 
-<img src="/assets/sourcetypes-appointments.png" height="800px" />
+<img src="./assets/sourcetypes-appointments.png" height="800px" />
 
 ### Send salespersons
 
 In the `Salespersons/Purchasers` list, go to Actions → Dime.Scheduler → Send All. This sends the salespersons to Dime.Scheduler:
 
-<img src="/assets/sales-all.png" height="200px" />
+<img src="./assets/sales-all.png" height="200px" />
 
 This action creates a list of resources in Dime.Scheduler with a new resource type:
 
-<img src="/assets/resources.png" height="300px" />
+<img src="./assets/resources.png" height="300px" />
 
 ### Send opportunity
 
@@ -86,7 +89,7 @@ Navigate to the opportunity card. At the bottom, you can choose to either:
 
 Whichever option you choose, go to Actions → Dime.Scheduler → Send to Dime.Scheduler.
 
-<img src="/assets/opportunity.png" height="500px" />
+<img src="./assets/opportunity.png" height="500px" />
 
 The item(s) will now appear in the open tasks list, where they can be assigned to a salesperson.
 
@@ -94,7 +97,7 @@ The item(s) will now appear in the open tasks list, where they can be assigned t
 
 Drag the item to the planning board. This triggers an update to Business Central.
 
-<img src="/assets/planning.png" height="200px" />
+<img src="./assets/planning.png" height="200px" />
 
 Right-click the appointment, navigate to Links, and click on the linked opportunity card item. This will bring you back to Business Central.
 
@@ -102,7 +105,7 @@ Right-click the appointment, navigate to Links, and click on the linked opportun
 
 In Business Central, the `DS Handle Opportunity Demo` codeunit is executed. It creates a task with the relevant planning data - namely, the assignment of a task to a resource on a specific date and time.
 
-<img src="/assets/bc.png" height="400px" />
+<img src="./assets/bc.png" height="400px" />
 
 In addition to creating a task in Business Central, Dime.Scheduler also creates a link between the Dime.Scheduler appointment and the Business Central task. Any subsequent updates, whether made in Dime.Scheduler or in Business Central, will be propagated to the connected entries. This effectively enables a bidirectional synchronization between Dime.Scheduler and Business Central.
 

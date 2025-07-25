@@ -18,6 +18,7 @@ codeunit 2088000 "DS Send Opportunity Demo"
         if not DimeDSSetup.Get() then
             exit;
 
+        // For dev purposes only - see XML comments of this procedure
         EnsureDSSourceTypes();
 
         if not Contact.get(Rec."Contact No.") then
@@ -161,6 +162,19 @@ codeunit 2088000 "DS Send Opportunity Demo"
         end;
     end;
 
+
+    /// <summary>
+    /// Ensures that all required Dime Scheduler source types are present in the system to receive planning data for opportunities and salespersons in BC.
+    /// </summary>
+    /// <remarks>
+    /// ******************************************************
+    /// DO NOT USE THIS PROCEDURE IN PRODUCTION ENVIRONMENTS.
+    /// ******************************************************
+    /// This method is required only for those that run this app in VS Code.    
+    /// Otherwise, OnInstallAppPerCompany is called upon installation - rendering this method unnecessary.
+    /// The same can easily be achieved by manual entry in the 'Dime.Scheduler Source Type' table.
+    /// For more information, read the README.md.        
+    /// </remarks>    
     procedure EnsureDSSourceTypes()
     var
         DSSourceType: Record "Dime DS Source Type";
