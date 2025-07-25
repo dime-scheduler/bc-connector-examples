@@ -32,12 +32,15 @@ code bc-connector-examples
     "version": "0.2.0",
     "configurations": [
         {
-            // ...            
+            "type": "al",
+            "request": "launch",
             "name": "BC26",
             "server": "http://BC26/BC",
             "serverInstance": "BC",
-            "authentication": "UserPassword"
-            // ...            
+            "authentication": "UserPassword",
+            "breakOnError": true,            
+            "schemaUpdateMode": "Synchronize",
+            "dependencyPublishingOption": "Ignore"
         }
     ]
 }
