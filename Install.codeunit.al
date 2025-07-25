@@ -1,10 +1,9 @@
 codeunit 2088007 "DS Install Demo"
 {
-    Subtype = Upgrade;
+    Subtype = Install;
 
-    trigger OnUpgradePerCompany()
+    trigger OnInstallAppPerCompany()
     begin
-        Message('Upgrade per company');
         InitializeDSSourceTypes();
     end;
 
@@ -13,6 +12,10 @@ codeunit 2088007 "DS Install Demo"
         DSSourceType: Record "Dime DS Source Type";
         DimeDSSetup: Record "Dime DS Setup";
     begin
+        // Check if setup exist
+        if not DimeDSSetup.Get() then
+            exit;
+
         // Initialize SalesPerson source type
         if not DSSourceType.Get(DATABASE::"Salesperson/Purchaser") then begin
             DSSourceType.Init();
@@ -26,12 +29,8 @@ codeunit 2088007 "DS Install Demo"
             DSSourceType.Init();
             DSSourceType."Table No." := DATABASE::Opportunity;
             DSSourceType."Source Type" := 'OPP';
-            DSSourceType."Processing Codeunit No." := 2088002;
+            DSSourceType."Processing Codeunit No." := Codeunit::"DS Handle Opportunity Demo";
             DSSourceType.Insert();
         end;
-
-        // Get the current setup
-        if not DimeDSSetup.Get() then
-            DimeDSSetup.Init();
     end;
 }

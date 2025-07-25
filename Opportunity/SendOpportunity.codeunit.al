@@ -12,15 +12,14 @@ codeunit 2088000 "DS Send Opportunity Demo"
         DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
         // Ensure setup records exist
-        if not DimeDSConnectorSetup.Get() then begin
-            DimeDSConnectorSetup.Init();
-            DimeDSConnectorSetup.Insert();
-        end;
+        if not DimeDSConnectorSetup.Get() then
+            exit;
 
-        if not DimeDSSetup.Get() then begin
-            DimeDSSetup.Init();
-            DimeDSSetup.Insert();
-        end;
+        if not DimeDSSetup.Get() then
+            exit;
+
+        // For dev purposes only - see XML comments of this procedure
+        EnsureDSSourceTypes();
 
         if not Contact.get(Rec."Contact No.") then
             exit;
@@ -94,6 +93,7 @@ codeunit 2088000 "DS Send Opportunity Demo"
         DSWebservMgt.AddParameter('TaskNo', format(OpportunityStages."Sales Cycle Stage"));
         DSWebservMgt.AddParameter('JobNo', Opportunity."No.");
         DSWebservMgt.AddParameter('ShortDescription', OpportunityStages."Sales Cycle Stage Description");
+        DSWebservMgt.AddParameter('Description', OpportunityStages."Sales Cycle Stage Description");
 
         // Fields that affect default Duration and Capacity
         DSWebservMgt.AddParameter('DurationInSeconds', DimeDSDimeSchedulerMgt.ConvertDecimaltoSeconds(4)); // Fixed 4h
@@ -159,6 +159,41 @@ codeunit 2088000 "DS Send Opportunity Demo"
             DSWebservMgt.AddParameter('CheckAppointments', DSWebservMgt.HandleBool(DimeDSSetup."Check Appointment on Delete"));
 
             DSWebservMgt.CallDimeSchedulerWS('mboc_deleteJob');
+        end;
+    end;
+
+
+    /// <summary>
+    /// Ensures that all required Dime Scheduler source types are present in the system to receive planning data for opportunities and salespersons in BC.
+    /// </summary>
+    /// <remarks>
+    /// ******************************************************
+    /// DO NOT USE THIS PROCEDURE IN PRODUCTION ENVIRONMENTS.
+    /// ******************************************************
+    /// This method is required only for those that run this app in VS Code.    
+    /// Otherwise, OnInstallAppPerCompany is called upon installation - rendering this method unnecessary.
+    /// The same can easily be achieved by manual entry in the 'Dime.Scheduler Source Type' table.
+    /// For more information, read the README.md.        
+    /// </remarks>    
+    procedure EnsureDSSourceTypes()
+    var
+        DSSourceType: Record "Dime DS Source Type";
+    begin
+        // Initialize SalesPerson source type
+        if not DSSourceType.Get(DATABASE::"Salesperson/Purchaser") then begin
+            DSSourceType.Init();
+            DSSourceType."Table No." := DATABASE::"Salesperson/Purchaser";
+            DSSourceType."Source Type" := 'REP';
+            DSSourceType.Insert();
+        end;
+
+        // Initialize Opportunity source type
+        if not DSSourceType.Get(DATABASE::Opportunity) then begin
+            DSSourceType.Init();
+            DSSourceType."Table No." := DATABASE::Opportunity;
+            DSSourceType."Source Type" := 'OPP';
+            DSSourceType."Processing Codeunit No." := Codeunit::"DS Handle Opportunity Demo";
+            DSSourceType.Insert();
         end;
     end;
 }
