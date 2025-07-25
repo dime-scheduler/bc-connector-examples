@@ -52,6 +52,7 @@ code bc-connector-examples
 ## Prerequisites
 
 The Dime.Scheduler base app must be deployed and configured.
+
 👉 For more information, check out the [docs](https://docs.dimescheduler.com/backoffice/bc/intro).
 
 ## How to use this example
