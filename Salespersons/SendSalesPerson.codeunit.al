@@ -10,8 +10,12 @@ codeunit 2088003 "DS Send Sales Person Demo"
         DimeDSDimeSchedulerMgt: Codeunit "Dime DS Dime.Scheduler Mgt.";
         RecRef: RecordRef;
     begin
-        DimeDSConnectorSetup.Get();
-        DimeDSSetup.Get();
+        // Ensure setup records exist
+        if not DimeDSConnectorSetup.Get() then
+            exit;
+
+        if not DimeDSSetup.Get() then
+            exit;
 
         // Transfer the Filter Values for the Resource - uses the DS Doc. Filter Value Sources setup
         RecRef.GetTable(Rec);

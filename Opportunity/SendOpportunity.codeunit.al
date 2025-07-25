@@ -12,15 +12,11 @@ codeunit 2088000 "DS Send Opportunity Demo"
         DSWebservMgt: Codeunit "Dime DS Web Service Management";
     begin
         // Ensure setup records exist
-        if not DimeDSConnectorSetup.Get() then begin
-            DimeDSConnectorSetup.Init();
-            DimeDSConnectorSetup.Insert();
-        end;
+        if not DimeDSConnectorSetup.Get() then
+            exit;
 
-        if not DimeDSSetup.Get() then begin
-            DimeDSSetup.Init();
-            DimeDSSetup.Insert();
-        end;
+        if not DimeDSSetup.Get() then
+            exit;
 
         if not Contact.get(Rec."Contact No.") then
             exit;
@@ -94,6 +90,7 @@ codeunit 2088000 "DS Send Opportunity Demo"
         DSWebservMgt.AddParameter('TaskNo', format(OpportunityStages."Sales Cycle Stage"));
         DSWebservMgt.AddParameter('JobNo', Opportunity."No.");
         DSWebservMgt.AddParameter('ShortDescription', OpportunityStages."Sales Cycle Stage Description");
+        DSWebservMgt.AddParameter('Description', OpportunityStages."Sales Cycle Stage Description");
 
         // Fields that affect default Duration and Capacity
         DSWebservMgt.AddParameter('DurationInSeconds', DimeDSDimeSchedulerMgt.ConvertDecimaltoSeconds(4)); // Fixed 4h
