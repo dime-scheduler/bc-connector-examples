@@ -61,7 +61,7 @@ The Dime.Scheduler base app must be deployed and configured.
 
 The `Install.codeunit.al` initializes the salespersons and opportunities tables in the Dime.Scheduler Source Types table. This initialization only needs to be run once. 
 
-For developers who want to debug this app, we added the `EnsureDSSourceTypes` code unit that does the same thing. Note that this is an antipattern and is exclusively done for the developer's convenience.
+For developers who want to debug this app, we added the `EnsureDSSourceTypes` code unit that does the same thing. Note that this is an antipattern and is exclusively added for the developer's convenience.
 
 <img src="./assets/sourcetypes.png" height="200px" />
 
@@ -121,7 +121,6 @@ root/
 │   ├── HandleOpportunity.codeunit.al # Opportunity handling and processing
 │   ├── OpportunityCardExt.PageExt.al # Opportunity card page extension
 │   ├── OpportunityExt.TableExt.al    # Opportunity table extension
-│   └── ToDoExt.TableExt.al           # ToDo table extension
 ├── Salespersons/
 │   ├── SendSalesPerson.codeunit.al   # Salesperson resource sending logic
 │   ├── SalespersonCardExt.PageExt.al # Salesperson card page extension
