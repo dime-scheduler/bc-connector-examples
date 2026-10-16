@@ -25,7 +25,21 @@ git clone https://github.com/dime-scheduler/bc-connector-examples.git
 code bc-connector-examples
 ```
 
-3. Update .vscode/launch.json to point to your BC instance
+3. Download the Microsoft symbols: `CTRL + SHIFT + P` -> `AL: Download symbols from global sources` (requires the AL extension for BC 2026 wave 2 / v29 or later). No Business Central environment is needed: the Microsoft symbols come from Microsoft's public NuGet feeds.
+
+4. Get the Dime.Scheduler app from [nuget.org](https://www.nuget.org/packages/DimeSoftware.DimeScheduler.BC29.f15bbe6d-c2a3-4828-aa98-5a77cff4cd41) and drop it into `.alpackages` (from the repo root, in PowerShell):
+
+```powershell
+$pkg = "$env:TEMP\dimescheduler-bc29"
+Invoke-WebRequest https://www.nuget.org/api/v2/package/DimeSoftware.DimeScheduler.BC29.f15bbe6d-c2a3-4828-aa98-5a77cff4cd41/3.1.0 -OutFile "$pkg.zip" -UseBasicParsing
+Expand-Archive "$pkg.zip" $pkg -Force
+New-Item -ItemType Directory -Force .alpackages | Out-Null
+Copy-Item "$pkg\*.app" .alpackages\; Remove-Item $pkg, "$pkg.zip" -Recurse
+```
+
+> The connector is published on nuget.org per BC release ([BC27](https://www.nuget.org/packages/DimeSoftware.DimeScheduler.BC27.f15bbe6d-c2a3-4828-aa98-5a77cff4cd41), [BC28](https://www.nuget.org/packages/DimeSoftware.DimeScheduler.BC28.f15bbe6d-c2a3-4828-aa98-5a77cff4cd41), [BC29](https://www.nuget.org/packages/DimeSoftware.DimeScheduler.BC29.f15bbe6d-c2a3-4828-aa98-5a77cff4cd41)). For CI pipelines using BcContainerHelper or AL-Go, add nuget.org as a trusted feed with the pattern `DimeSoftware.*`; the resolver picks the build matching your target BC version automatically.
+
+5. Update .vscode/launch.json to point to your BC instance:
 
 ```json
 {
@@ -34,8 +48,8 @@ code bc-connector-examples
         {
             "type": "al",
             "request": "launch",
-            "name": "BC26",
-            "server": "http://BC26/BC",
+            "name": "BC29",
+            "server": "http://BC29/BC",
             "serverInstance": "BC",
             "authentication": "UserPassword",
             "breakOnError": true,            
@@ -46,8 +60,9 @@ code bc-connector-examples
 }
 ```
 
-4. Download the symbols: `CTRL + SHIFT + P` -> `AL: Download Symbols`
-5. Hit F5 to start debugging
+> On older AL extensions without NuGet feed support, use `AL: Download Symbols` against your BC instance instead.
+
+6. Hit F5 to start debugging
 
 ## Prerequisites
 
@@ -129,9 +144,9 @@ root/
 
 ## Dependencies
 
-- **Dime.Scheduler**: Version 2.6.0.0 or higher
-- **Microsoft Dynamics 365 Business Central**: Version 26.0.0.0 or higher
-- **Platform**: 16.0.0.0
-- **Application**: 16.0.0.0
-- **Runtime**: 14.0
+- **Dime.Scheduler**: Version 3.1.0.0 or higher ([available on nuget.org](https://www.nuget.org/packages?q=DimeSoftware.DimeScheduler))
+- **Microsoft Dynamics 365 Business Central**: Version 29.0.0.0 or higher
+- **Platform**: 29.0.0.0
+- **Application**: 29.0.0.0
+- **Runtime**: 18.0
 
